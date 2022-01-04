@@ -9,6 +9,9 @@ const path = require("path");
 const port = process.env.PORT || 3000;
 let interval;
 
+app.get("/", (req, res) => {
+  res.send("Hello from server...");
+});
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
