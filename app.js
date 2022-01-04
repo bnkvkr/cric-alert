@@ -145,7 +145,7 @@ bot.on("message", async (msg) => {
           .catch(function (err) {
             console.log(err);
           });
-      }, 10000);
+      }, 2000);
     } else {
       bot.sendMessage(chatId, "Dhang ka message likh bhosdike");
     }
