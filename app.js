@@ -55,6 +55,8 @@ const token = "5093575769:AAEAbb80P0kBo51TbVoIpfhpmxtcDYtK4L8";
 const bot = new TelegramBot(token, { polling: true });
 
 let data = [];
+let pre_comment = "HEY";
+let flag = 0;
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
   const message = msg["text"];
@@ -84,7 +86,6 @@ bot.on("message", async (msg) => {
   } else if (data.length != 0) {
     if (parseInt(message) >= 1 && parseInt(message) <= data.length) {
       let resp = parseInt(message) - 1;
-      let pre_comment = "";
       interval = setInterval(async () => {
         var url =
           "https://cricket-api.vercel.app/cri.php?url=https://www.cricbuzz.com/" +
@@ -92,7 +93,7 @@ bot.on("message", async (msg) => {
         var url2 =
           "https://www.cricbuzz.com/api/cricket-match/commentary/" +
           data[resp].id;
-        let flag = 0;
+
         fetch(url2)
           .then(function (response) {
             return response.json();
@@ -147,6 +148,7 @@ bot.on("message", async (msg) => {
           .then(function (data) {
             if (flag == 1) {
               bot.sendMessage(chatId, data["livescore"]["current"]);
+              flag = 0;
             }
             return data["livescore"]["current"];
           })
