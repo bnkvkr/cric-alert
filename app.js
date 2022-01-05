@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 const notifier = require("node-notifier");
 const path = require("path");
 const port = process.env.PORT || 3000;
-let interval;
+let interval = 0;
 
 app.get("/", (req, res) => {
   res.send("Hello from server...");
@@ -65,7 +65,7 @@ bot.on("message", async (msg) => {
   if (message == "/stop") {
     bot.sendMessage(chatId, "Thanks for using.. see you again 👋👋");
     flag2 = 1;
-
+    data = [];
     clearInterval(interval);
   } else if (message == "/start") {
     let temp = await getScores();
@@ -163,7 +163,7 @@ bot.on("message", async (msg) => {
           .catch(function (err) {
             console.log(err);
           });
-      }, 5000);
+      }, 15000);
     } else {
       bot.sendMessage(chatId, "please enter valid input");
     }
