@@ -106,7 +106,7 @@ bot.on("message", async (msg) => {
             let over = data["commentaryList"][0]["overNumber"];
 
             if (over) {
-              if (over[over.length - 1] == "6") flag = 1;
+              if (over.charAt(over.length - 1) == "6") flag = 1;
             }
 
             let mp = {};
@@ -129,8 +129,11 @@ bot.on("message", async (msg) => {
             }
 
             s = over ? over + "-" + s : "" + s;
+            let result = s.includes(pre_comment);
             if (pre_comment != s) {
-              bot.sendMessage(chatId, s);
+              if (!result) {
+                bot.sendMessage(chatId, s);
+              }
               pre_comment = s;
             }
           })
@@ -142,8 +145,9 @@ bot.on("message", async (msg) => {
             return response.json();
           })
           .then(function (data) {
-            if (flag === 1)
+            if (flag == 1) {
               bot.sendMessage(chatId, data["livescore"]["current"]);
+            }
             return data["livescore"]["current"];
           })
           .catch(function (err) {
