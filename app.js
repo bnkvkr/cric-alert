@@ -106,7 +106,7 @@ bot.on("message", async (msg) => {
             let over = data["commentaryList"][0]["overNumber"];
 
             if (over) {
-              if (over[over.size() - 1] == "6") flag = 1;
+              if (over[over.length - 1] == "6") flag = 1;
             }
 
             let mp = {};
