@@ -50,19 +50,20 @@ const TelegramBot = require("node-telegram-bot-api");
 
 // // replace the value below with the Telegram token you receive from @BotFather
 const token = "5093575769:AAEAbb80P0kBo51TbVoIpfhpmxtcDYtK4L8";
-
+// const token = "5030146518:AAG2jDfgOS27qfWuMz2l9D3W98jb9uEfp4k";
 // // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
 
 let data = [];
 let pre_comment = "HEY";
-let flag = 0;
+let flag2 = 0,
+  flag = 0;
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
   const message = msg["text"];
 
   if (message == "/stop") {
-    bot.sendMessage(chatId, "Maa Chudaiye tab aur kya");
+    bot.sendMessage(chatId, "Thanks for using.. see you again 👋👋");
     flag2 = 1;
 
     clearInterval(interval);
@@ -74,10 +75,7 @@ bot.on("message", async (msg) => {
       bot.sendMessage(chatId, "No live matches.");
     } else {
       // temp.sort();
-      bot.sendMessage(
-        chatId,
-        "Chaliye shuru karte hain.. bina kisi bakchodi ke sath.."
-      );
+      bot.sendMessage(chatId, "Hello from cric-alert..👋👋");
       for (let i = 0; i < temp.length; i++) {
         // console.log(temp[i].link);
         bot.sendMessage(chatId, "Press " + (i + 1) + " for " + temp[i].title);
@@ -104,12 +102,22 @@ bot.on("message", async (msg) => {
             )[0];
             const key_val =
               data["commentaryList"][0]["commentaryFormats"][firstKey];
-            let over = data["commentaryList"][0]["overNumber"];
+            let over = 0;
+            if (data["commentaryList"][0]["overNumber"])
+              over = String(data["commentaryList"][0]["overNumber"]);
 
-            if (over) {
-              if (over[over.length - 1] == "6") flag = 1;
+            if (
+              over &&
+              over.length &&
+              over[over.length - 1] == "6" &&
+              flag == 0
+            ) {
+              flag = 2;
+            } else if (over && over[over.length - 1] == "1" && flag == 1) {
+              flag = 0;
             }
-
+            //  console.log(over);
+            console.log(flag);
             let mp = {};
             if (key_val) {
               a = key_val["formatId"];
@@ -146,9 +154,9 @@ bot.on("message", async (msg) => {
             return response.json();
           })
           .then(function (data) {
-            if (flag == 1) {
+            if (flag == 2) {
               bot.sendMessage(chatId, data["livescore"]["current"]);
-              flag = 0;
+              flag = 1;
             }
             return data["livescore"]["current"];
           })
@@ -157,7 +165,7 @@ bot.on("message", async (msg) => {
           });
       }, 5000);
     } else {
-      bot.sendMessage(chatId, "Dhang ka message likh bhosdike");
+      bot.sendMessage(chatId, "please enter valid input");
     }
   }
 });
