@@ -98,9 +98,12 @@ bot.on("message", async (msg) => {
             return response.json();
           })
           .then(function (data) {
+            let firstKey = Object.keys(
+              data["commentaryList"][0]["commentaryFormats"]
+            )[0];
             const key_val =
-              data["commentaryList"][0]["commentaryFormats"]["bold"];
-            const over = data["commentaryList"][0]["overNumber"];
+              data["commentaryList"][0]["commentaryFormats"][firstKey];
+            let over = data["commentaryList"][0]["overNumber"];
 
             if (over) {
               if (over[over.size() - 1] == "6") flag = 1;
@@ -145,7 +148,7 @@ bot.on("message", async (msg) => {
           .catch(function (err) {
             console.log(err);
           });
-      }, 2000);
+      }, 5000);
     } else {
       bot.sendMessage(chatId, "Dhang ka message likh bhosdike");
     }
