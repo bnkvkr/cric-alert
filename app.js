@@ -127,7 +127,8 @@ bot.on("message", async (msg) => {
                 s = s.replace(temp, mp[temp]);
               }
             }
-            s = over ? over + "-" : "" + s;
+
+            s = over ? over + "-" + s : "" + s;
             if (pre_comment != s) {
               bot.sendMessage(chatId, s);
               pre_comment = s;
