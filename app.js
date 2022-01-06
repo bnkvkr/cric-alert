@@ -7,7 +7,8 @@ const cheerio = require("cheerio");
 const notifier = require("node-notifier");
 const path = require("path");
 const port = process.env.PORT || 3000;
-let interval = 0;
+//let interval = 0;
+let arr = [];
 
 app.get("/", (req, res) => {
   res.send("Hello from server...");
@@ -48,25 +49,49 @@ const getScores = async () => {
 
 const TelegramBot = require("node-telegram-bot-api");
 
-// // replace the value below with the Telegram token you receive from @BotFather
 const token = "5093575769:AAEAbb80P0kBo51TbVoIpfhpmxtcDYtK4L8";
-// const token = "5030146518:AAG2jDfgOS27qfWuMz2l9D3W98jb9uEfp4k";
+//const token = "5030146518:AAG2jDfgOS27qfWuMz2l9D3W98jb9uEfp4k";
 // // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
 
 let data = [];
-let pre_comment = "HEY";
-let flag2 = 0,
-  flag = 0;
+// let pre_comment = "HEY";
+// let flag2 = 0,
+//   flag = 0;
+const search = async (chatId) => {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].chatId === chatId) return arr[i];
+  }
+  return undefined;
+};
+const deleteobj = async (chatId) => {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].chatId === chatId) {
+      arr.splice(i, 1);
+    }
+  }
+};
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
+  console.log(chatId);
+  let obj = await search(chatId);
+  if (obj == undefined) {
+    obj = {};
+    obj.chatId = chatId;
+    obj.pre_comment = "Hey";
+    obj.flag = 0;
+    obj.flag2 = 0;
+    obj.interval = 0;
+    arr.push(obj);
+  }
   const message = msg["text"];
 
   if (message == "/stop") {
     bot.sendMessage(chatId, "Thanks for using.. see you again 👋👋");
-    flag2 = 1;
-    data = [];
-    clearInterval(interval);
+    obj.flag2 = 1;
+
+    clearInterval(obj.interval);
+    const del = await deleteobj(chatId);
   } else if (message == "/start") {
     let temp = await getScores();
     data = [...temp];
@@ -84,7 +109,7 @@ bot.on("message", async (msg) => {
   } else if (data.length != 0) {
     if (parseInt(message) >= 1 && parseInt(message) <= data.length) {
       let resp = parseInt(message) - 1;
-      interval = setInterval(async () => {
+      obj.interval = setInterval(async () => {
         var url =
           "https://cricket-api.vercel.app/cri.php?url=https://www.cricbuzz.com/" +
           data[resp].link;
@@ -110,14 +135,13 @@ bot.on("message", async (msg) => {
               over &&
               over.length &&
               over[over.length - 1] == "6" &&
-              flag == 0
+              obj.flag == 0
             ) {
-              flag = 2;
-            } else if (over && over[over.length - 1] == "1" && flag == 1) {
-              flag = 0;
+              obj.flag = 2;
+            } else if (over && over[over.length - 1] == "1" && obj.flag == 1) {
+              obj.flag = 0;
             }
-            //  console.log(over);
-            console.log(flag);
+
             let mp = {};
             if (key_val) {
               a = key_val["formatId"];
@@ -138,12 +162,13 @@ bot.on("message", async (msg) => {
             }
 
             s = over ? over + "-" + s : "" + s;
-            let result = s.includes(pre_comment);
-            if (pre_comment != s) {
+            let result = s.includes(obj.pre_comment);
+            console.log(obj.pre_comment);
+            if (obj.pre_comment != s) {
               if (!result) {
                 bot.sendMessage(chatId, s);
               }
-              pre_comment = s;
+              obj.pre_comment = s;
             }
           })
           .catch(function (err) {
@@ -154,16 +179,16 @@ bot.on("message", async (msg) => {
             return response.json();
           })
           .then(function (data) {
-            if (flag == 2) {
+            if (obj.flag == 2) {
               bot.sendMessage(chatId, data["livescore"]["current"]);
-              flag = 1;
+              obj.flag = 1;
             }
             return data["livescore"]["current"];
           })
           .catch(function (err) {
             console.log(err);
           });
-      }, 15000);
+      }, 5000);
     } else {
       bot.sendMessage(chatId, "please enter valid input");
     }
