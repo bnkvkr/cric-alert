@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 const notifier = require("node-notifier");
 const path = require("path");
 const port = process.env.PORT || 3000;
-//let interval = 0;
+
 let arr = [];
 
 app.get("/", (req, res) => {
@@ -73,7 +73,7 @@ const deleteobj = async (chatId) => {
 };
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
-  console.log(chatId);
+  //console.log(chatId);
   let obj = await search(chatId);
   if (obj == undefined) {
     obj = {};
@@ -163,7 +163,7 @@ bot.on("message", async (msg) => {
 
             s = over ? over + "-" + s : "" + s;
             let result = s.includes(obj.pre_comment);
-            console.log(obj.pre_comment);
+            //console.log(obj.pre_comment);
             if (obj.pre_comment != s) {
               if (!result) {
                 bot.sendMessage(chatId, s);
@@ -188,7 +188,7 @@ bot.on("message", async (msg) => {
           .catch(function (err) {
             console.log(err);
           });
-      }, 5000);
+      }, 3500);
     } else {
       bot.sendMessage(chatId, "please enter valid input");
     }
